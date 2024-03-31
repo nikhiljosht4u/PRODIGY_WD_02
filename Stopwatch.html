@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch</title>
+<style>
+  #stopwatch {
+    font-size: 8em;
+    margin: 20px;
+    color: #fff;
+  } 
+  #spacing {
+    padding: 60px;
+  }
+  .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .button {
+    width: 140px;
+    height: 45px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-weight: 500;
+    color: #000;
+    background-color: #fff;
+    border: none;
+    border-radius: 45px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+    margin: 10px;
+  }
+  .button:hover {
+    background-color: #2EE59D;
+    box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+    color: #fff;
+    transform: translateY(-7px);
+  }
+  #buttons {
+    padding: 5px;
+    margin: 20px;
+  }
+  #lap-times {
+    text-align: left;
+    margin: 0px auto;
+    font-family: 'Roboto', sans-serif;
+    max-width: 400px;
+    padding: 10px;
+    line-height: 2;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+</style>
+</head>
+<body style="font-family: Arial, sans-serif; text-align: center; background-image: url('bg.jpg'); background-size: cover; background-repeat: no-repeat; margin-top: 50px;">
+  <div id="spacing"></div>
+<div id="stopwatch">00:00:00</div>
+<div class="wrap" id="buttons">
+  <button class="button" onclick="startStop()">Start/Stop</button>
+  <button class="button" onclick="reset()">Reset</button>
+  <button class="button" onclick="lap()">Lap</button>
+</div>
+<div id="lap-times"></div>
+
+<script>
+let stopwatchInterval;
+let startTime;
+let running = false;
+let lapCount = 1;
+
+function startStop() {
+  if (running) {
+    clearInterval(stopwatchInterval);
+    running = false;
+  } else {
+    startTime = Date.now() - (lapCount > 1 ? lapCount - 1 : 0) * 1000 * 60;
+    stopwatchInterval = setInterval(updateStopwatch, 10);
+    running = true;
+  }
+}
+
+function updateStopwatch() {
+  const elapsedTime = Date.now() - startTime;
+  const minutes = Math.floor(elapsedTime / (1000 * 60));
+  const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+  const milliseconds = Math.floor((elapsedTime % 1000) / 10);
+  document.getElementById("stopwatch").textContent = 
+    `${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`;
+}
+
+function pad(num) {
+  return num.toString().padStart(2, '0');
+}
+
+function reset() {
+  clearInterval(stopwatchInterval);
+  document.getElementById("stopwatch").textContent = "00:00:00";
+  document.getElementById("lap-times").innerHTML = "";
+  running = false;
+  lapCount = 1;
+}
+
+function lap() {
+  if (!running) return;
+  const lapTime = document.createElement("div");
+  lapTime.textContent = `Lap ${lapCount++}: ${document.getElementById("stopwatch").textContent}`;
+  document.getElementById("lap-times").appendChild(lapTime);
+}
+</script>
+</body>
+</html>
